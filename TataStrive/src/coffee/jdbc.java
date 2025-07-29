@@ -22,18 +22,22 @@ public class jdbc {
             String query = "SELECT * FROM employees";
             ResultSet rs = stmt.executeQuery(query);
 
-            System.out.println("\n------------------ Employee Table ----------------------");
-            System.out.printf("%-5s %-5s %-12s %-10s %-12s%n", "id", "age", "name", "salary", "job");
-            System.out.println("--------------------------------------------------------");
+            ResultSetMetaData meta = rs.getMetaData();
+            int columnCount = meta.getColumnCount();
 
+            // Dynamically display column headers
+            for (int i = 1; i <= columnCount; i++) {
+                System.out.printf("%-15s", meta.getColumnName(i));
+            }
+            System.out.println();
+
+            // Dynamically display rows
             while (rs.next()) {
-                int id = rs.getInt("id");
-                int age = rs.getInt("age");
-                String name = rs.getString("name");
-                double salary = rs.getDouble("salary");
-                String job = rs.getString("job");
-
-                System.out.printf("%-5d %-5d %-12s %-10.2f %-12s%n", id, age, name, salary, job);
+                for (int i = 1; i <= columnCount; i++) {
+                    Object value = rs.getObject(i);
+                    System.out.printf("%-15s", value);
+                }
+                System.out.println();
             }
 
             conn.close();
